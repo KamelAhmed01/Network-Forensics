@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Traffic Monitor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="<https://cdn.jsdelivr.net/npm/chart.js>"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="main-header">
+            <h1>Network Traffic Anomaly Monitor</h1>
+            <div class="header-status">
+                <span class="status-indicator active"></span>
+                <span>Monitoring Active</span>
+                <p id="last-updated">Last updated: Loading...</p>
+            </div>
+        </header>
+
+        <div class="dashboard-grid">
+            <!-- Summary Cards -->
+            <div class="card summary-card">
+                <h2>Detection Summary</h2>
+                <div class="summary-stats">
+                    <div class="stat-item">
+                        <span class="stat-value" id="total-anomalies">-</span>
+                        <span class="stat-label">Total Anomalies</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="avg-score">-</span>
+                        <span class="stat-label">Avg. Anomaly Score</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Time Series Chart -->
+            <div class="card chart-card">
+                <h2>Anomalies Over Time</h2>
+                <div class="chart-container">
+                    <canvas id="timeseries-chart"></canvas>
+                </div>
+            </div>
+
+            <!-- Top Sources -->
+            <div class="card source-card">
+                <h2>Top Source IPs</h2>
+                <div id="top-sources" class="ip-list"></div>
+            </div>
+
+            <!-- Protocol Distribution -->
+            <div class="card protocol-card">
+                <h2>Protocol Distribution</h2>
+                <div class="chart-container">
+                    <canvas id="protocol-chart"></canvas>
+                </div>
+            </div>
+
+            <!-- Anomalies Table -->
+            <div class="card table-card">
+                <h2>Latest Anomalies</h2>
+                <div class="table-container">
+                    <table id="anomalies-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Source IP</th>
+                                <th>Destination IP</th>
+                                <th>Protocol</th>
+                                <th>Packets</th>
+                                <th>Bytes</th>
+                                <th>Score</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="refresh-time">Data refreshes every {{update_interval/1000}} seconds</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>
