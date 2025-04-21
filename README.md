@@ -1,109 +1,109 @@
-# Network Forensics - Suricata Monitor
+# Network Traffic Forensics
 
-A real-time monitoring application for Suricata IDS (Intrusion Detection System) logs, providing visualization and analysis tools for network security events.
+AI-assisted network traffic analysis system for real-time anomaly detection using Suricata and Isolation Forest.
 
 ## Features
 
-- Real-time log monitoring and visualization
-- Event filtering and searching
-- Statistical analysis of network traffic and security events
-- Interactive dashboard with charts and graphs
-- Socket-based real-time updates
+- Real-time processing of Suricata's Eve JSON output
+- Unsupervised anomaly detection using Isolation Forest
+- Interactive web dashboard for monitoring anomalies
+- Detection of various cyber threats including DDoS attacks, malware communications, and unauthorized access
 
-## Tech Stack
+## Quick Start
 
-- **Frontend**: React, TypeScript, Chakra UI, Recharts, React Query
-- **Backend**: Node.js, Express, Socket.io
-- **Build Tools**: Vite, TypeScript
-- **Styling**: TailwindCSS
+### Prerequisites
 
-## Prerequisites
+- Suricata installed and configured
+- Python 3.8+ with pip
 
-- Node.js (v16+)
-- npm or yarn
-- **Suricata IDS** must be installed and running on the system with logs at `/var/log/suricata/eve.json`
+### Installation
 
-## Installation
+1. Clone the repository:
+   ```bash
+   git clone "Project Repo"
+   cd network-forensics
+   
+2. Install dependencies:
+    
+    ```bash
+    pip install -r requirements.txt
+    
+    ```
+    
+3. Install and configure Suricata:
+    
+    ```bash
+    sudo ./scripts/install_suricata.sh
+    
+    ```
+    
 
-Clone the repository:
+### Configuration
+
+1. Configure Suricata to write to eve.json:
+    
+    ```bash
+    sudo nano /etc/suricata/suricata.yaml
+    
+    ```
+    
+    Make sure the following is set:
+    
+    ```yaml
+    outputs:
+      - eve-log:
+          enabled: yes
+          filetype: regular
+          filename: /var/log/suricata/eve.json
+          types:
+            - alert
+            - flow
+    
+    ```
+    
+2. Create model directory:
+    
+    ```bash
+    mkdir -p ~/network_data
+    
+    ```
+    
+
+### Training the Model
+
+1. Collect normal traffic data:
+    
+    ```bash
+    sudo ./scripts/collect_training_data.sh eth0
+    
+    ```
+    
+2. Train the Isolation Forest model:
+    
+    ```bash
+    python -m src.ai.training
+    
+    ```
+    
+
+### Running the System
+
+Start all components:
+
 ```bash
-git clone https://github.com/Black1hp/Network-Forensics.git
-cd Network-Forensics
+python src/main.py
+
 ```
 
-Install dependencies:
+Or run components separately:
+
 ```bash
-npm install
+# Run only the detector
+python src/main.py --detector-only
+
+# Run only the dashboard
+python src/main.py --dashboard-only
+
 ```
 
-## Suricata Configuration
-
-**IMPORTANT: This application requires Suricata to be installed and running with logs configured at `/var/log/suricata/eve.json`.**
-
-1. If you haven't already, install Suricata:
-```bash
-sudo apt-get update
-sudo apt-get install suricata
-```
-
-2. Configure Suricata using the provided configuration file:
-```bash
-sudo cp backend/suricata.yaml /etc/suricata/
-sudo systemctl restart suricata
-```
-
-3. Verify Suricata is running and generating logs:
-```bash
-sudo systemctl status suricata
-ls -la /var/log/suricata/eve.json
-```
-
-## Usage
-
-### Development
-
-Start the backend server:
-```bash
-npm run backend
-```
-
-Start the frontend development server:
-```bash
-npm run dev
-```
-
-### Production
-
-Build the application:
-```bash
-npm run build
-```
-
-Preview the production build:
-```bash
-npm run preview
-```
-
-## Project Structure
-
-- `/src` - Frontend React application
-  - `/components` - React components
-  - `/hooks` - Custom React hooks
-  - `/services` - API service functions
-  - `/types` - TypeScript type definitions
-  - `/utils` - Utility functions
-- `/backend` - Node.js server
-  - `server.js` - Express server setup and socket logic
-  - `suricata.yaml` - Sample Suricata configuration
-
-## License
-
-See the [LICENSE](LICENSE) file for details.
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+Access the dashboard at [http://localhost:5000]

@@ -1,0 +1,18 @@
+# Main configuration file for Network Traffic Forensics
+
+# Paths
+model_path: "~/network_data/iforest_model.pkl"
+feature_columns_path: "~/network_data/feature_columns.pkl"
+output_path: "~/network_data/anomalies.json"
+eve_json_path: "/var/log/suricata/eve.json" # Path to Suricata eve.json log file real time
+
+# Detector settings
+polling_interval: 1.0  # seconds
+write_interval: 5.0    # seconds
+
+# Dashboard settings
+host: "0.0.0.0"
+port: 5000
+update_interval: 5000  # milliseconds
+debug: false
+

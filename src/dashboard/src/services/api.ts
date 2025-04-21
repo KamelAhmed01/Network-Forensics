@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { LogEntry, LogsResponse, FilterOptions, DashboardStats } from '../types';
 
-// With the proxy setup in vite.config.ts, we can use relative URLs
+// Update this to point to your Python backend
 const API_BASE_URL = '/api';
 
 const api = axios.create({
@@ -55,6 +55,41 @@ export const fetchDashboardStats = async (
     return response.data;
   } catch (error) {
     console.error('Error fetching dashboard stats:', error);
+    throw error;
+  }
+};
+
+// Add a new function to fetch anomalies from your Python backend
+export const fetchAnomalies = async (limit = 50): Promise<any> => {
+  try {
+    const response = await api.get('/anomalies', {
+      params: { limit }
+    });
+    
+    // Transform the anomaly data to match your LogEntry format
+    const logs: LogEntry[] = response.data.anomalies.map((anomaly: any) => ({
+      id: anomaly.flow_id || String(Math.random()),
+      timestamp: anomaly.timestamp,
+      sourceIp: anomaly.src_ip,
+      destinationIp: anomaly.dst_ip,
+      sourcePort: 0, // Add if available in your anomaly data
+      destinationPort: 0, // Add if available
+      protocol: anomaly.proto || "UNKNOWN",
+      severity: anomaly.score < -0.5 ? 'critical' : 
+               anomaly.score < -0.3 ? 'high' : 'medium',
+      category: 'anomaly',
+      message: `Network anomaly detected (score: ${anomaly.score.toFixed(3)})`,
+      raw: anomaly
+    }));
+    
+    return {
+      logs,
+      total: response.data.total,
+      page: 1,
+      limit
+    };
+  } catch (error) {
+    console.error('Error fetching anomalies:', error);
     throw error;
   }
 };
